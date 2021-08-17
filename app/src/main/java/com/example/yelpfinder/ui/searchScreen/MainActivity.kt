@@ -6,15 +6,12 @@ import android.text.TextWatcher
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.example.yelpfinder.R
 import com.example.yelpfinder.databinding.ActivityMainBinding
-import com.example.yelpfinder.models.dataModels.BusinessesModel
 import com.example.yelpfinder.ui.searchScreen.businesseScreen.FragmentBusinesses
 import com.example.yelpfinder.util.DataState
 import dagger.hilt.android.AndroidEntryPoint
-
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -33,10 +30,7 @@ class MainActivity : AppCompatActivity() {
                 term = s.toString().trim()
             }
 
-            override fun beforeTextChanged(
-                s: CharSequence, start: Int, count: Int,
-                after: Int
-            ) {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
                 // TODO Auto-generated method stub
             }
 
@@ -51,10 +45,7 @@ class MainActivity : AppCompatActivity() {
                 location = s.toString().trim()
             }
 
-            override fun beforeTextChanged(
-                s: CharSequence, start: Int, count: Int,
-                after: Int
-            ) {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
                 // TODO Auto-generated method stub
             }
 
@@ -62,7 +53,6 @@ class MainActivity : AppCompatActivity() {
                 // TODO Auto-generated method stub
             }
         })
-
 
         binding.button.setOnClickListener {
             term?.let {
@@ -90,7 +80,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-
 
         setContentView(binding.root)
     }

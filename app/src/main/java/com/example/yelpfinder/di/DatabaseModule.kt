@@ -31,4 +31,3 @@ class DatabaseModule {
         return businessEntityDatabase.businessDataDao()
     }
 }
-

@@ -10,4 +10,4 @@ data class Location(
     var address3: String,
     var city: String,
     var zipCode: Int
-):Parcelable
+) : Parcelable

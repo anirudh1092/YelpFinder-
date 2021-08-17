@@ -59,5 +59,4 @@ class BusinessesAdapter(val context: Context, private val businessesModel: Busin
             address = binding.cellAddress
         }
     }
-
 }

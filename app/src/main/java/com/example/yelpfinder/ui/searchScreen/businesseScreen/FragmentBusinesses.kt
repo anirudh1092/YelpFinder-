@@ -13,7 +13,7 @@ import com.example.yelpfinder.models.dataModels.BusinessesModel
 
 class FragmentBusinesses() : Fragment() {
 
-    var businessData : BusinessesModel? = null
+    var businessData: BusinessesModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +30,7 @@ class FragmentBusinesses() : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         val binding = FragmentBusinessesBinding.inflate(inflater)
         businessData?.let {
-            val adapter = BusinessesAdapter(requireContext(),it)
+            val adapter = BusinessesAdapter(requireContext(), it)
             binding.fragmentBusinessesRecyclerview.adapter = adapter
             binding.fragmentBusinessesRecyclerview.addItemDecoration(
                 DividerItemDecoration(
@@ -39,14 +39,12 @@ class FragmentBusinesses() : Fragment() {
                 )
             )
         }
-
         return binding.root
     }
 
-
-    companion object{
+    companion object {
         private const val BUSINESSDATA = "BusinessData"
-        fun getInstance(context: Context, businessData : BusinessesModel): FragmentBusinesses{
+        fun getInstance(context: Context, businessData: BusinessesModel): FragmentBusinesses {
             val fragment = FragmentBusinesses()
             val bundle = Bundle(1)
             bundle.putParcelable(BUSINESSDATA, businessData)

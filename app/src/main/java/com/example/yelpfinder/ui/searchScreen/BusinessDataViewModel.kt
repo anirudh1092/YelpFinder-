@@ -4,13 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.yelpfinder.models.dataModels.BusinessesModel
-import com.example.yelpfinder.models.database.businessDataCacheModels.BusinessDataEntity
 import com.example.yelpfinder.util.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,9 +17,7 @@ class BusinessDataViewModel
     private val repository: BusinessDataRepository
 ) : ViewModel() {
 
-
     val dataState: MutableLiveData<DataState<BusinessesModel>> = MutableLiveData()
-
 
     fun setStateEvent(mainStateEvent: MainStateEvent) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -29,10 +25,10 @@ class BusinessDataViewModel
                 is MainStateEvent.SearchClicked -> {
                     getData(mainStateEvent.term, mainStateEvent.location)
                 }
-                is MainStateEvent.DataLoaded ->{
+                is MainStateEvent.DataLoaded -> {
                     dataState.postValue(DataState.Success(mainStateEvent.data))
                 }
-                is MainStateEvent.ErrorFetching ->{
+                is MainStateEvent.ErrorFetching -> {
                     dataState.postValue(DataState.Error(mainStateEvent.exception))
                 }
             }
@@ -60,6 +56,4 @@ class BusinessDataViewModel
         data class DataLoaded(val data: BusinessesModel) : MainStateEvent()
         data class ErrorFetching(val exception: Exception) : MainStateEvent()
     }
-
-
 }
