@@ -24,10 +24,6 @@ data class LocationsNetworkData(
     @SerializedName("zip_code")
     @Expose
     var zipCode: Int,
-
-    @SerializedName("display_address")
-    @Expose
-    var displayAddress: List<String>
 )
 
 

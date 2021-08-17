@@ -7,8 +7,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -16,6 +18,9 @@ import javax.inject.Singleton
 object RetrofitModule {
 
     val BASE_URL = "https://api.yelp.com/v3/"
+    val AUTHORIZATION_HEADER = "Authorization"
+    val authorization_token =
+        "Bearer 2ROaa2Rh9qu3WVTCms8FoVE4mSfHQHC7QJua95-kKT-PqzIlLSrs4tmHVdtdFw_66-JNfRiJmbCByHTvFNy5dQq-tpfS4FrPpupIzKlgELR3br-r5trpeFhrCRgwWnYx"
 
     @Singleton
     @Provides
@@ -27,16 +32,38 @@ object RetrofitModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(gson:  Gson): Retrofit.Builder {
+    fun provideRetrofit(gson: Gson): Retrofit.Builder {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
     }
 
+
     @Singleton
     @Provides
-    fun provideBusinessesService(retrofit: Retrofit.Builder): BusinessesApiService {
+    fun providesOkHttpClient(): OkHttpClient {
+        val builder = OkHttpClient.Builder()
+        builder.readTimeout(10, TimeUnit.SECONDS);
+        builder.connectTimeout(5, TimeUnit.SECONDS);
+
+        builder.addInterceptor {
+            val request =
+                it.request().newBuilder().addHeader(AUTHORIZATION_HEADER, authorization_token)
+                    .build()
+            it.proceed(request)
+        }
+
+        return builder.build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideBusinessesService(
+        retrofit: Retrofit.Builder,
+        client: OkHttpClient
+    ): BusinessesApiService {
         return retrofit
+            .client(client)
             .build()
             .create(BusinessesApiService::class.java)
     }
