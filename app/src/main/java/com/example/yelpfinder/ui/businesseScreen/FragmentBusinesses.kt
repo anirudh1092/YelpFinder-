@@ -1,4 +1,4 @@
-package com.example.yelpfinder.ui.searchScreen.businesseScreen
+package com.example.yelpfinder.ui.businesseScreen
 
 import android.content.Context
 import android.os.Bundle

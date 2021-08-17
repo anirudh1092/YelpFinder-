@@ -13,6 +13,7 @@ import com.example.yelpfinder.models.networkDataSorces.BusinessesNetworkDataSour
 import com.example.yelpfinder.models.networkDataSorces.CoordinatesNetworkData
 import com.example.yelpfinder.models.networkDataSorces.LocationsNetworkData
 import com.example.yelpfinder.util.DataState
+import com.example.yelpfinder.util.StringFormatterUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -23,28 +24,39 @@ class BusinessDataRepository
     private val businessDataDao: BusinessDataDao
 ) {
 
-    suspend fun getBusinessApiData(
+    suspend fun getBusinessData(
         term: String,
-        location: String
+        location: String,
+        cacheMap: Map<String, List<String>>
     ): Flow<DataState<BusinessesModel>> =
         flow {
             try {
-                val apiData = retrofit.getBusinessData(term, location)
-                val businessDatasource =
-                    retrofit.getBusinessData(
-                        term,
-                        location
-                    ).businesses
-                for (business in businessDatasource) {
-                    businessDataDao.saveBusinessData(
-                        businessDataEntity = generateBusinessDataEntity(business)
-                    )
+                val dataCache = mutableListOf<BusinessDataEntity>()
+                val apiParams = StringFormatterUtil.getLocationAndTermString(term, location)
+                if (cacheMap.containsKey(apiParams)) {
+                    cacheMap.forEach {
+                        it.value.forEach { id ->
+                            dataCache.add(businessDataDao.getBusinessDataForId(id))
+                        }
+                    }
+                    emit(DataState.Success(generateBusinessesModel(dataCache)))
+                } else {
+                    val businessDatasource =
+                        retrofit.getBusinessData(
+                            term,
+                            location
+                        ).businesses
+                    for (business in businessDatasource) {
+                        businessDataDao.saveBusinessData(
+                            businessDataEntity = generateBusinessDataEntity(business)
+                        )
+                    }
+                    val cache = mutableListOf<BusinessDataEntity>()
+                    for (business in businessDatasource) {
+                        cache.add(businessDataDao.getBusinessDataForId(business.id))
+                    }
+                    emit(DataState.Success(generateBusinessesModel(cache)))
                 }
-                val cache = mutableListOf<BusinessDataEntity>()
-                for(business in businessDatasource){
-                    cache.add(businessDataDao.getBusinessDataForId(business.id))
-                }
-                emit(DataState.Success(generateBusinessesModel(cache, apiData)))
             } catch (e: Exception) {
                 emit(DataState.Error(e))
             }
@@ -67,8 +79,7 @@ class BusinessDataRepository
     }
 
     private fun generateBusinessesModel(
-        cache: List<BusinessDataEntity>,
-        api: BusinessesNetworkDataSource
+        cache: List<BusinessDataEntity>
     ): BusinessesModel {
         val businessesModelData = mutableListOf<BusinessDataModel>()
 
@@ -88,7 +99,7 @@ class BusinessDataRepository
             )
             businessesModelData.add(dataModelElement)
         }
-        return BusinessesModel(businessesModelData, api.total)
+        return BusinessesModel(businessesModelData)
     }
 
     private fun generateCoordinate(coordinatesNetworkData: CoordinatesNetworkData): Coordinates {

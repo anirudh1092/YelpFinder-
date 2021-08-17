@@ -7,6 +7,5 @@ import kotlinx.android.parcel.RawValue
 
 @Parcelize
 data class BusinessesModel(
-    var businesses: List<BusinessDataModel>,
-    var total: Int
+    var businesses: List<BusinessDataModel>
 ) : Parcelable

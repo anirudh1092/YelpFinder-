@@ -7,8 +7,5 @@ data class BusinessesNetworkDataSource(
 
     @SerializedName("businesses")
     @Expose
-    var businesses: List<BusinessDataNetworkDataSource>,
-    @SerializedName("total")
-    @Expose
-    var total: Int
+    var businesses: List<BusinessDataNetworkDataSource>
 )

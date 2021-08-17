@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.yelpfinder.R
 import com.example.yelpfinder.databinding.ActivityMainBinding
-import com.example.yelpfinder.ui.searchScreen.businesseScreen.FragmentBusinesses
+import com.example.yelpfinder.ui.businesseScreen.FragmentBusinesses
 import com.example.yelpfinder.util.DataState
 import dagger.hilt.android.AndroidEntryPoint
 
