@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
                     transaction.commit()
                 }
                 is DataState.Error -> {
-                    Log.e("Anirudha", it.exception.toString())
+                    Log.e("MainActivity", it.exception.toString())
                 }
             }
         })
