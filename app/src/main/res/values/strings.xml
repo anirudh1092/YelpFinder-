@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">YelpFinder</string>
+    <string name="term_hint_text">Search for Burgers, pizzas or food you like</string>
+    <string name="location_hint_text">Enter your location</string>
+    <string name="search_button_text">Search  for Restaurants </string>
+    <string name="ratings" formatted="true"> Ratings: </string>
+    <string name="phone" formatted="true"> Phone : </string>
+    <string name="address" formatted="true"> Address : </string>
 </resources>

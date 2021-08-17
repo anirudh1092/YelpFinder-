@@ -24,6 +24,6 @@ interface BusinessDataDao {
     fun getAllBusinesses(): List<BusinessDataEntity>
 
     @Query("SELECT * from BusinessDataEntity where id like :id ")
-    fun getBusinessDataForID(id: String): BusinessDataEntity
+    fun getBusinessDataForId(id: String): BusinessDataEntity
 
 }
