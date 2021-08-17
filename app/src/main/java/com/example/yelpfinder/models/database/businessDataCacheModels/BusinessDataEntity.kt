@@ -18,7 +18,6 @@ data class BusinessDataEntity(
     @ColumnInfo
     var imageUrl: String,
 
-
     @ColumnInfo
     var isClosed: Boolean,
 

@@ -38,13 +38,12 @@ object RetrofitModule {
             .addConverterFactory(GsonConverterFactory.create(gson))
     }
 
-
     @Singleton
     @Provides
     fun providesOkHttpClient(): OkHttpClient {
         val builder = OkHttpClient.Builder()
-        builder.readTimeout(10, TimeUnit.SECONDS);
-        builder.connectTimeout(5, TimeUnit.SECONDS);
+        builder.readTimeout(10, TimeUnit.SECONDS)
+        builder.connectTimeout(5, TimeUnit.SECONDS)
 
         builder.addInterceptor {
             val request =
@@ -67,5 +66,4 @@ object RetrofitModule {
             .build()
             .create(BusinessesApiService::class.java)
     }
-
 }

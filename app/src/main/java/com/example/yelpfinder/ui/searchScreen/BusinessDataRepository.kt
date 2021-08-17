@@ -2,9 +2,14 @@ package com.example.yelpfinder.ui.searchScreen
 
 import androidx.room.ColumnInfo
 import com.example.yelpfinder.api.BusinessesApiService
+import com.example.yelpfinder.models.dataModels.BusinessDataModel
+import com.example.yelpfinder.models.dataModels.BusinessesModel
+import com.example.yelpfinder.models.dataModels.Coordinates
+import com.example.yelpfinder.models.dataModels.Location
 import com.example.yelpfinder.models.database.businessDataCacheModels.BusinessDataDao
 import com.example.yelpfinder.models.database.businessDataCacheModels.BusinessDataEntity
 import com.example.yelpfinder.models.networkDataSorces.BusinessDataNetworkDataSource
+import com.example.yelpfinder.models.networkDataSorces.BusinessesNetworkDataSource
 import com.example.yelpfinder.models.networkDataSorces.CoordinatesNetworkData
 import com.example.yelpfinder.models.networkDataSorces.LocationsNetworkData
 import com.example.yelpfinder.util.DataState
@@ -21,23 +26,25 @@ class BusinessDataRepository
     suspend fun getBusinessApiData(
         term: String,
         location: String
-    ): Flow<DataState<BusinessDataEntity>> =
+    ): Flow<DataState<BusinessesModel>> =
         flow {
             try {
-                val data =
+                val apiData = retrofit.getBusinessData(term, location)
+                val businessDatasource =
                     retrofit.getBusinessData(
                         term,
                         location
                     ).businesses
-                for (business in data) {
+                for (business in businessDatasource) {
                     businessDataDao.saveBusinessData(
                         businessDataEntity = generateBusinessDataEntity(business)
                     )
                 }
-                val cache = businessDataDao.getAllBusinesses()
-                for (business in cache) {
-                    emit(DataState.Success(business))
+                val cache = mutableListOf<BusinessDataEntity>()
+                for(business in businessDatasource){
+                    cache.add(businessDataDao.getBusinessDataForId(business.id))
                 }
+                emit(DataState.Success(generateBusinessesModel(cache, apiData)))
             } catch (e: Exception) {
                 emit(DataState.Error(e))
             }
@@ -56,6 +63,48 @@ class BusinessDataRepository
             location = business.location,
             phone = business.phone,
             distance = business.distance
+        )
+    }
+
+    private fun generateBusinessesModel(
+        cache: List<BusinessDataEntity>,
+        api: BusinessesNetworkDataSource
+    ): BusinessesModel {
+        val businessesModelData = mutableListOf<BusinessDataModel>()
+
+        for (data in cache) {
+            val dataModelElement = BusinessDataModel(
+                id = data.id,
+                name = data.name,
+                imageUrl = data.imageUrl,
+                isClosed = data.isClosed,
+                businessUrl = data.businessUrl,
+                reviewCount = data.reviewCount,
+                ratings = data.ratings,
+                coordinates = generateCoordinate(data.coordinates),
+                location = generateLocation(data.location),
+                phone = data.phone,
+                distance = data.distance
+            )
+            businessesModelData.add(dataModelElement)
+        }
+        return BusinessesModel(businessesModelData, api.total)
+    }
+
+    private fun generateCoordinate(coordinatesNetworkData: CoordinatesNetworkData): Coordinates {
+        return Coordinates(
+            latitude = coordinatesNetworkData.latitude,
+            longitude = coordinatesNetworkData.longitude
+        )
+    }
+
+    private fun generateLocation(locationsNetworkData: LocationsNetworkData): Location {
+        return Location(
+            address1 = locationsNetworkData.address1,
+            address2 = locationsNetworkData.address2,
+            address3 = locationsNetworkData.address3,
+            city = locationsNetworkData.city,
+            zipCode = locationsNetworkData.zipCode
         )
     }
 }
